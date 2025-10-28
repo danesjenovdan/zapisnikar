@@ -9,4 +9,4 @@ resources:
 images:
   - name: zapisnikar
     newName: rg.fr-par.scw.cloud/djnd/zapisnikar
-    newTag: '8e4a88cbb97ec2de0a0eee0181b1f3517a7fc3c5'
+    newTag: 'b2ff7947594d8f3c0e977427619b3de99d49032e'
