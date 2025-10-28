@@ -29,8 +29,6 @@ spec:
             - collectstatic
             - --no-input
           env:
-            - name: DJANGO_SETTINGS_MODULE
-              value: djndonacije.settings
             - name: DJANGO_STATIC_ROOT
               value: '/storage/static'
           envFrom:
@@ -49,9 +47,6 @@ spec:
             - python
             - manage.py
             - migrate
-          env:
-            - name: DJANGO_SETTINGS_MODULE
-              value: djndonacije.settings.k8s
           envFrom:
             - secretRef:
                 name: zapisnikar-credentials
@@ -70,7 +65,7 @@ spec:
               mountPath: /storage
           command:
             - gunicorn
-            - djndonacije.wsgi:application
+            - zapisniki.wsgi:application
             - -b
             - 0.0.0.0:8000
             - --log-level
