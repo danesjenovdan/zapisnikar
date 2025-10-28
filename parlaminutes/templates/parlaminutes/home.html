@@ -1,0 +1,46 @@
+<html>
+<body>
+  {% if messages %}
+    {% for message in messages %}
+      {% if 'success' in message.tags %}
+        <p>{{ message }}</p>
+      {% else %}
+        <p>{{ message }}</p>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  
+  <h1>Upload sound file</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>
+      <label for="copy_title">Copy transcript from ID:</label>
+      <input type="text" name="copy_from" id="id_copy_from">
+    </p>
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+  </form>
+  
+  <h1>Transcripts</h1>
+  <table border="1">
+    <tr>
+      <th>ID</th>
+      <th>Ime</th>
+      <th>Datum</th>
+      <th>Status</th>
+    </tr>
+    {% for minutes in minutes_list %}
+      <tr>
+        <td>{{ minutes.id }}</td>
+        <td><a href="transcript/{{minutes.id}}">{{ minutes.title }}</a></td>
+        <td>{{ minutes.created_at|date:"d.m.Y H:i" }}</td>
+        <td>{{ minutes.status }}</td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="4">Ni transkriptov</td>
+      </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

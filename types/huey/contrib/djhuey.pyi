@@ -1,0 +1,3 @@
+from typing import Callable
+
+def db_periodic_task(schedule: Callable): ...

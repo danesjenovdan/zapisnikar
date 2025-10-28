@@ -1,0 +1,135 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zapisnikar-deployment
+  labels:
+    app: zapisnikar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zapisnikar
+  template:
+    metadata:
+      labels:
+        app: zapisnikar
+    spec:
+      volumes:
+        - name: zapisnikar-storage
+          emptyDir: {}
+      initContainers:
+        - name: collectstatic
+          image: zapisnikar
+          volumeMounts:
+            - name: zapisnikar-storage
+              mountPath: /storage
+          command:
+            - python
+            - manage.py
+            - collectstatic
+            - --no-input
+          env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: djndonacije.settings
+            - name: DJANGO_STATIC_ROOT
+              value: '/storage/static'
+          envFrom:
+            - secretRef:
+                name: zapisnikar-credentials
+          resources:
+            requests:
+              memory: 200Mi
+              cpu: 200m
+            limits:
+              memory: 200Mi
+              cpu: 200m
+        - name: migrate
+          image: zapisnikar
+          command:
+            - python
+            - manage.py
+            - migrate
+          env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: djndonacije.settings.k8s
+          envFrom:
+            - secretRef:
+                name: zapisnikar-credentials
+          resources:
+            requests:
+              memory: 200Mi
+              cpu: 200m
+            limits:
+              memory: 200Mi
+              cpu: 200m
+      containers:
+        - name: zapisnikar
+          image: zapisnikar
+          volumeMounts:
+            - name: zapisnikar-storage
+              mountPath: /storage
+          command:
+            - gunicorn
+            - djndonacije.wsgi:application
+            - -b
+            - 0.0.0.0:8000
+            - --log-level
+            - DEBUG
+            - --workers
+            - "1"
+            - --threads
+            - "3"
+            - --timeout
+            - "120"
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: zapisnikar-credentials
+          env:
+            - name: DJANGO_STATIC_ROOT
+              value: '/storage/static'
+            - name: DJANGO_STATIC_URL_BASE
+              value: "https://files.zapisnikar.lb.djnd.si/static/"
+          resources:
+            requests:
+              memory: 400Mi
+              cpu: 200m
+            limits:
+              memory: 400Mi
+              cpu: 200m
+        - name: zapisnikar-huey
+          image: zapisnikar
+          volumeMounts:
+            - name: zapisnikar-storage
+              mountPath: /storage
+          command:
+            - python
+            - manage.py
+            - run_huey
+          envFrom:
+            - secretRef:
+                name: zapisnikar-credentials
+          resources:
+            requests:
+              memory: 400Mi
+              cpu: 200m
+            limits:
+              memory: 400Mi
+              cpu: 200m
+        - name: zapisnikar-nginx
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          image: nginx:alpine
+          volumeMounts:
+            - name: zapisnikar-storage
+              mountPath: /usr/share/nginx/html
+          resources:
+            requests:
+              memory: 100Mi
+              cpu: 100m
+            limits:
+              memory: 100Mi
+              cpu: 100m

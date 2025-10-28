@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>Transcript and Minutes</title>
+<body>
+  {% if messages %}
+    {% for message in messages %}
+      {% if 'success' in message.tags %}
+        <p class="">{{ message }}</p>
+      {% else %}
+        {{ message }}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  <h1>Transcript</h1>
+  {{ minutes.title }} </br>
+  {{ minutes.created_at|date:"d.m.Y H:i" }} </br>
+
+  {% if minutes.sound_file %}
+  <a href="{{ minutes.sound_file.url }}">Download Sound File</a> </br>
+  {% endif %}
+  {% if minutes.transcript_file %}
+  <a href="{{ minutes.transcript_file.url }}">Download Transcript File</a></br>
+  {% endif %}
+  {% if minutes.example_file %}
+  <a href="{{ minutes.example_file.url }}">Download Example File</a></br>
+  {% endif %}
+  {% if minutes.llm_minutes_file %}
+  <a href="{{ minutes.llm_minutes_file.url }}">Download LLM Minutes File</a></br>
+  {% endif %}
+
+</body>
+</html>
