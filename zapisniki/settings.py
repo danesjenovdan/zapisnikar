@@ -163,10 +163,11 @@ GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "")
 
 
 HUEY = RedisHuey(
-    name="moja_aplikacija",
+    name=os.getenv("DATABASE_NAME", "zapisnikar"),
     host=os.getenv("REDIS_URL", "redis"),
     port=int(os.getenv("REDIS_PORT", 6379)),
     password=os.getenv("REDIS_PASSWORD", None),
+    db=int(os.getenv("REDIS_DB", 0)),
 )
 
 
