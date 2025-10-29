@@ -44,12 +44,13 @@ def generate_minutes(minutes_instance: Minutes) -> None:
     minutes_instance.save()
 
 
-@db_task()
+@db_task(retries=3, retry_delay=600)
 def generate_minutes_from_files(minutes_instance: Minutes) -> None:
     client = genai.Client()
 
     # Upload files - uporablja context manager za S3 kompatibilnost
     with get_temporary_file_path(minutes_instance.transcript_file) as transcript_path:
+        tprint(transcript_path)
         transcript_file = client.files.upload(file=transcript_path)
         while transcript_file.state.name == "PROCESSING":
             time.sleep(2)
@@ -57,6 +58,7 @@ def generate_minutes_from_files(minutes_instance: Minutes) -> None:
 
     if minutes_instance.example_file:
         with get_temporary_file_path(minutes_instance.example_file) as example_path:
+            tprint(example_path)
             example_file = client.files.upload(file=example_path)
             while example_file.state.name == "PROCESSING":
                 time.sleep(2)
@@ -81,20 +83,24 @@ def generate_minutes_from_files(minutes_instance: Minutes) -> None:
             ],
         )
     ]
-
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=contents,
-    )
-
-    if response.text:
-        minutes_instance.generated_minutes = response.text
-        filename = f"llm_minutes_{minutes_instance.id}_{int(time.time())}.txt"
-        minutes_instance.llm_minutes_file.save(
-            filename, ContentFile(response.text.encode("utf-8")), save=False
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=contents,
         )
-        minutes_instance.save()
-        tprint(response.text)
+
+        if response.text:
+            minutes_instance.generated_minutes = response.text
+            filename = f"llm_minutes_{minutes_instance.id}_{int(time.time())}.txt"
+            minutes_instance.llm_minutes_file.save(
+                filename, ContentFile(response.text.encode("utf-8")), save=False
+            )
+            minutes_instance.save()
+            minutes_instance.set_completed()
+            tprint(response.text)
+    except Exception as e:
+        minutes_instance.set_error(str(e))
+        tprint(f"Error during minutes generation: {e}", c=31)
 
 
 @db_task()
@@ -140,8 +146,9 @@ def check_status_and_download_transcription() -> None:
                     ContentFile(transcript_response.content),  # content je že bytes
                     save=False,  # Ne shrani še, ker bomo klicali save() spodaj
                 )
+                minutes_instance.set_waiting_minutes()
 
-            minutes_instance.save()
-            # generate_minutes(minutes_instance)
-            generate_minutes_from_files(minutes_instance)
-            tprint("Transcription downloaded and saved.")
+                minutes_instance.save()
+                # generate_minutes(minutes_instance)
+                generate_minutes_from_files(minutes_instance)
+                tprint("Transcription downloaded and saved.")

@@ -9,15 +9,15 @@ from django.core.files.base import File
 
 @contextmanager
 def get_temporary_file_path(file_field: File) -> Generator[str, None, None]:
+    # If s3 is not enabled then return the direct path
+    if not settings.ENABLE_S3:
+        yield file_field.path
+        return
+
     temp_fd = None
     temp_path = None
 
     try:
-
-        # If s3 is not enabled then return the direct path
-        if not settings.ENABLE_S3:
-            yield file_field.path
-
         # Create a temporary file
         file_extension = os.path.splitext(file_field.name)[1]
         temp_fd, temp_path = tempfile.mkstemp(suffix=file_extension)
