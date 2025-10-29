@@ -29,7 +29,7 @@ services:
       - TIPKO_API_ENDPOINT=https://tipko.si
       - TIPKO_API_USERNAME=username
       - TIPKO_API_PASSWORD=password
-      - REDIS_URL=redis://redis:6379/0
+      - REDIS_URL=redis
       - GOOGLE_API_KEY=key
       - AWS_SECRET_ACCESS_KEY=key
       - AWS_ACCESS_KEY_ID=id
@@ -55,7 +55,7 @@ services:
       - TIPKO_API_ENDPOINT=https://tipko.si
       - TIPKO_API_USERNAME=username
       - TIPKO_API_PASSWORD=password
-      - REDIS_URL=redis://redis:6379/0
+      - REDIS_URL=redis
       - GOOGLE_API_KEY=key
       - AWS_SECRET_ACCESS_KEY=key
       - AWS_ACCESS_KEY_ID=id
