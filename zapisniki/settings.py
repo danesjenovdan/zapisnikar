@@ -14,6 +14,9 @@ import os
 from pathlib import Path
 from typing import List
 
+from django_redis import get_redis_connection
+from huey import RedisHuey
+
 from parlaminutes.tipko_source import Api
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -158,32 +161,14 @@ TIPKO_API_PASSWORD = os.environ.get("TIPKO_API_PASSWORD", "password")
 
 GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "")
 
-HUEY = {
-    "huey_class": "huey.RedisHuey",  # Huey implementation to use.
-    "name": "zapisniki_huey",  # Huey queue name.
-    "results": True,  # Store return values of tasks.
-    "store_none": False,  # If a task returns None, do not save to results.
-    "immediate": False,  # Set to False to enable consumer mode.
-    "utc": True,  # Use UTC for all times internally.
-    "blocking": True,  # Perform blocking pop rather than poll Redis.
-    "connection": {
-        "url": os.environ.get("REDIS_URL", "redis://localhost:6379/0"),
-        "connection_params": {
-            "password": os.environ.get("REDIS_PASSWORD", None),
-        },
-    },
-    "consumer": {
-        "workers": 1,
-        "worker_type": "thread",
-        "initial_delay": 0.1,  # Smallest polling interval, same as -d.
-        "backoff": 1.15,  # Exponential backoff using this rate, -b.
-        "max_delay": 10.0,  # Max possible polling interval, -m.
-        "scheduler_interval": 1,  # Check schedule every second, -s.
-        "periodic": True,  # Enable crontab feature.
-        "check_worker_health": True,  # Enable worker health checks.
-        "health_check_interval": 1,  # Check worker health every second.
-    },
-}
+
+HUEY = RedisHuey(
+    name="moja_aplikacija",
+    host=os.getenv("REDIS_URL", "redis"),
+    port=int(os.getenv("REDIS_PORT", 6379)),
+    password=os.getenv("REDIS_PASSWORD", None),
+)
+
 
 TIPKO_API_INSTANCE = Api(
     endpoint=TIPKO_API_ENDPOINT,

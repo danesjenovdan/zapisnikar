@@ -18,10 +18,10 @@ django-stubs-ext==5.2.2
 filetype==1.2.0
 frozenlist==1.7.0
 langchain==1.0.2
-redis==5.0.1
 ipython==8.19.0
 tuspy
-huey
+django-huey
+django-redis
 google-genai==1.46.0
 langchain-google-genai==3.0.0
 psycopg2-binary==2.9.10
