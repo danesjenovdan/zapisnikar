@@ -167,10 +167,8 @@ HUEY = {
     "utc": True,  # Use UTC for all times internally.
     "blocking": True,  # Perform blocking pop rather than poll Redis.
     "connection": {
-        "url": os.environ.get(
-            "REDIS_URL", "redis://localhost:6379/0"
-        ),  # Redis connection URL
-        "read_timeout": 1,  # If not polling (blocking pop), use timeout.
+        "url": os.environ.get("REDIS_URL", "redis://localhost:6379/0"),
+        "password": os.environ.get("REDIS_PASSWORD", None),
     },
     "consumer": {
         "workers": 1,
