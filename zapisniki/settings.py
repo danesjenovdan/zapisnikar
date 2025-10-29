@@ -168,7 +168,9 @@ HUEY = {
     "blocking": True,  # Perform blocking pop rather than poll Redis.
     "connection": {
         "url": os.environ.get("REDIS_URL", "redis://localhost:6379/0"),
-        "password": os.environ.get("REDIS_PASSWORD", None),
+        "connection_params": {
+            "password": os.environ.get("REDIS_PASSWORD", None),
+        },
     },
     "consumer": {
         "workers": 1,
