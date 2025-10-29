@@ -102,6 +102,11 @@ spec:
             - python
             - manage.py
             - run_huey
+          env:
+            - name: DJANGO_STATIC_ROOT
+              value: '/storage/static'
+            - name: DJANGO_STATIC_URL_BASE
+              value: "https://files.zapisnikar.lb.djnd.si/static/"
           envFrom:
             - secretRef:
                 name: zapisnikar-credentials

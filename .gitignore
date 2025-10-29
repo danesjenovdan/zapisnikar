@@ -193,3 +193,5 @@ scratchpad/*
 /sound_files/*
 
 */secrets.yaml
+minutes_files
+transcript_files
