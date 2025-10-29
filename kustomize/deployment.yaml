@@ -102,6 +102,10 @@ spec:
             - python
             - manage.py
             - run_huey
+            - --workers
+            - 2
+            - --worker-type
+            - thread
           env:
             - name: DJANGO_STATIC_ROOT
               value: '/storage/static'
