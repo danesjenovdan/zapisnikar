@@ -103,7 +103,7 @@ spec:
             - "manage.py"
             - "run_huey"
             - "--workers"
-            - "2"
+            - "1"
             - "--worker-type"
             - "thread"
           env:
