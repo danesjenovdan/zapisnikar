@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
@@ -8,6 +9,8 @@ from parlaminutes.tasks import generate_minutes_from_files, request_transcriptio
 
 
 # Create your views here.
+
+@login_required(login_url="/admin/login/")
 def home(request):
     context = {}
 
@@ -70,6 +73,7 @@ def home(request):
         return render(request, "parlaminutes/home.html", context)
 
 
+@login_required(login_url="/admin/login/")
 def transcript(request, minutes_id):
     context = {}
 

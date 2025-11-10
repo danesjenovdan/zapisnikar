@@ -163,12 +163,13 @@ GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY", "")
 
 
 HUEY = RedisHuey(
-    name=os.getenv("DATABASE_NAME", "zapisnikar"),
+    name=os.getenv("HUEY_NAME", "zapisnikar"),
     host=os.getenv("REDIS_URL", "redis"),
     port=int(os.getenv("REDIS_PORT", 6379)),
     password=os.getenv("REDIS_PASSWORD", None),
     db=int(os.getenv("REDIS_DB", 0)),
 )
+
 
 
 TIPKO_API_INSTANCE = Api(
