@@ -133,22 +133,33 @@ def check_status_and_download_transcription() -> None:
             texts = []
             for i in status_response["segments"]:
                 texts.append(i.get("text", ""))
-            minutes_instance.transcribed_text = "\n".join(texts)
-            transcript_response = tipko_api.get_transcription_file(
-                minutes_instance.tipko_task_id,
+            text = "\n".join(texts)
+            minutes_instance.transcribed_text = text
+            filename = f"transcript_{minutes_instance.tipko_task_id}.txt"
+            minutes_instance.transcript_file.save(
+                filename,
+                ContentFile(text),
+                save=False,
             )
+            minutes_instance.set_waiting_minutes()
+            minutes_instance.save()
+            generate_minutes_from_files(minutes_instance)
+            tprint("Transcription downloaded and saved.")
 
-            # Shrani file_content v transcript_file
-            if transcript_response.status_code == 200:
-                filename = f"transcript_{minutes_instance.tipko_task_id}.txt"
-                minutes_instance.transcript_file.save(
-                    filename,
-                    ContentFile(transcript_response.content),  # content je že bytes
-                    save=False,  # Ne shrani še, ker bomo klicali save() spodaj
-                )
-                minutes_instance.set_waiting_minutes()
+            # transcript_response = tipko_api.get_transcription_file(
+            #     minutes_instance.tipko_task_id,
+            # )
+            # # Shrani file_content v transcript_file
+            # if transcript_response.status_code == 200:
+            #     filename = f"transcript_{minutes_instance.tipko_task_id}.txt"
+            #     minutes_instance.transcript_file.save(
+            #         filename,
+            #         ContentFile(transcript_response.content),
+            #         save=False,
+            #     )
+            #     minutes_instance.set_waiting_minutes()
 
-                minutes_instance.save()
-                # generate_minutes(minutes_instance)
-                generate_minutes_from_files(minutes_instance)
-                tprint("Transcription downloaded and saved.")
+            #     minutes_instance.save()
+            #     # generate_minutes(minutes_instance)
+            #     generate_minutes_from_files(minutes_instance)
+            #     tprint("Transcription downloaded and saved.")
