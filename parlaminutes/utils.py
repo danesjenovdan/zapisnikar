@@ -52,7 +52,7 @@ def get_file_size(file_field: File) -> int:
     """Get file size regardless of storage backend."""
     try:
         return file_field.size
-    except (AttributeError, NotImplementedError):
+    except AttributeError, NotImplementedError:
         # Fallback for storage backends that don't support size
         file_field.seek(0, 2)  # Seek to end
         size = file_field.tell()
@@ -64,10 +64,10 @@ def file_exists(file_field: File) -> bool:
     """Check if file exists regardless of storage backend."""
     try:
         return file_field.storage.exists(file_field.name)
-    except (AttributeError, NotImplementedError):
+    except AttributeError, NotImplementedError:
         # Fallback
         try:
             file_field.size
             return True
-        except (ValueError, OSError):
+        except ValueError, OSError:
             return False
