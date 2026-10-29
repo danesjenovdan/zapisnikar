@@ -171,7 +171,6 @@ HUEY = RedisHuey(
 )
 
 
-
 TIPKO_API_INSTANCE = Api(
     endpoint=TIPKO_API_ENDPOINT,
     username=TIPKO_API_USERNAME,

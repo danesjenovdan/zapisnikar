@@ -7,8 +7,8 @@ from parlaminutes.forms import TranscriptSubmissionForm
 from parlaminutes.models import Minutes
 from parlaminutes.tasks import generate_minutes_from_files, request_transcription
 
-
 # Create your views here.
+
 
 @login_required(login_url="/admin/login/")
 def home(request):
