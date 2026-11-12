@@ -12,20 +12,20 @@ dependencies = [
     "django-redis==7.0.0",
     "tuspy==1.1.0",
     "google-genai==2.33.0",
-    "langchain==1.4.7",
-    "langchain-google-genai==4.4.2",
+    "langchain==1.4.9",
+    "langchain-google-genai==4.4.3",
     "gunicorn==26.2.0",
     "psycopg2-binary==2.9.13",
-    "boto3==1.43.120",
+    "boto3==1.43.126",
     "django-storages==1.14.6",
 ]
 
 [dependency-groups]
 dev = [
     "black==26.10.1",
-    "django-stubs==5.2.2",
+    "django-stubs==6.1.2",
     "django-stubs-ext==6.1.2",
-    "ipython==9.17.1",
+    "ipython==9.18.1",
     "isort",
 ]
 
